@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>New Agent Onboarding Quiz</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root {
     --navy: #14213D;
@@ -329,16 +328,26 @@
     const sendStatus = document.getElementById("sendStatus");
     sendStatus.textContent = "Sending certificate...";
     try {
-      const certEl = document.getElementById("certificate");
-      const canvas = await html2canvas(certEl, { backgroundColor: "#ffffff", scale: 2 });
-      const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+      const dateStr = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+      const certificateHtml =
+        '<div style="border:8px solid #14213D;padding:24px;text-align:center;font-family:Georgia,serif;max-width:480px;margin:0 auto;">' +
+        '<p style="letter-spacing:2px;text-transform:uppercase;color:#C9A24B;font-size:11px;font-weight:bold;margin:0 0 6px;">Lamacchia Realty</p>' +
+        '<h2 style="color:#14213D;margin:0 0 16px;">Certificate of Completion</h2>' +
+        '<p style="color:#6B6B63;margin:4px 0;">This certifies that</p>' +
+        '<p style="font-size:26px;color:#14213D;border-bottom:2px solid #C9A24B;display:inline-block;padding:0 8px 4px;margin:0 0 16px;">' + name + '</p>' +
+        '<p style="color:#6B6B63;margin:4px 0;">has successfully completed the</p>' +
+        '<p style="font-weight:bold;color:#14213D;margin:4px 0 16px;">New Agent Onboarding Training</p>' +
+        '<p style="color:#6B6B63;margin:4px 0;">with a score of <strong style="color:#14213D;">' + correct + ' of ' + Object.keys(answerKey).length + ' (' + pctDisplay + ')</strong></p>' +
+        '<p style="color:#6B6B63;font-size:12px;margin-top:16px;border-top:1px solid #E4DFD2;padding-top:12px;">' + dateStr + '</p>' +
+        '</div>';
 
       const data = new FormData();
       data.append("Agent Name", name);
       data.append("Agent Email", email);
       data.append("Score", correct + " of " + Object.keys(answerKey).length + " (" + pctDisplay + ")");
       data.append("Result", "PASSED");
-      data.append("certificate", blob, name.replace(/\s+/g, "_") + "_certificate.png");
+      data.append("Certificate", certificateHtml);
+      data.append("_subject", "Onboarding certificate: " + name);
 
       const response = await fetch(FORM_ENDPOINT, {
         method: "POST",
