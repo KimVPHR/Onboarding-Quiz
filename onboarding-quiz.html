@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Agent Onboarding Quiz</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --navy: #14213D;
+    --navy-light: #24325A;
+    --gold: #C9A24B;
+    --gold-light: #E4CD8C;
+    --cream: #FBF8F2;
+    --ink: #1E1E1C;
+    --muted: #6B6B63;
+    --line: #E4DFD2;
+    --green: #2E6B3E;
+    --red: #A83232;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.5;
+  }
+  header {
+    background: var(--navy);
+    color: var(--cream);
+    padding: 2.25rem 1.5rem 2rem;
+    text-align: center;
+  }
+  header .eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin: 0 0 0.5rem;
+  }
+  header h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.65rem;
+    margin: 0 0 0.5rem;
+    font-weight: 700;
+  }
+  header p {
+    margin: 0 auto;
+    color: #C9CDD9;
+    font-size: 0.95rem;
+    max-width: 30rem;
+  }
+  main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 1.75rem 1.25rem 3rem;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1.5rem 1.4rem;
+    margin-bottom: 1.1rem;
+  }
+  .q-label {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .q-text {
+    font-size: 1.02rem;
+    font-weight: 600;
+    margin: 0 0 1rem;
+    color: var(--navy);
+  }
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    font-size: 0.95rem;
+  }
+  .option:hover { border-color: var(--gold); background: #FDFAF3; }
+  .option input { accent-color: var(--navy); width: 17px; height: 17px; flex-shrink: 0; }
+  input[type="text"], input[type="email"] {
+    width: 100%;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--ink);
+    background: #fff;
+  }
+  input:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(20,33,61,0.08); }
+  .field + .field { margin-top: 0.9rem; }
+  .field label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 0.3rem; font-weight: 600; }
+  button[type="submit"], .action-btn {
+    width: 100%;
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    padding: 0.95rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+    letter-spacing: 0.02em;
+  }
+  button[type="submit"]:hover, .action-btn:hover { background: var(--navy-light); }
+  button:disabled { opacity: 0.6; cursor: not-allowed; }
+  #status { text-align: center; margin-top: 1rem; font-size: 0.9rem; font-weight: 600; }
+  #status.error { color: var(--red); }
+  .hidden { display: none; }
+
+  .result-card { text-align: center; padding: 2.5rem 1.5rem; }
+  .result-card h2 { font-family: Georgia, 'Times New Roman', serif; font-size: 1.4rem; margin-bottom: 0.4rem; }
+  .result-card.pass h2 { color: var(--green); }
+  .result-card.fail h2 { color: var(--red); }
+  .result-card p { color: var(--muted); margin: 0.2rem 0; }
+  .score-big { font-size: 2.2rem; font-weight: 700; color: var(--navy); margin: 0.5rem 0; }
+
+  #certificate {
+    background: #fff;
+    border: 10px solid var(--navy);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    margin: 1.5rem 0;
+    position: relative;
+  }
+  #certificate .cert-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  #certificate h2 {
+    font-family: Georgia, 'Times New Roman', serif;
+    color: var(--navy);
+    font-size: 1.3rem;
+    margin: 0 0 1.2rem;
+  }
+  #certificate .cert-name {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.8rem;
+    color: var(--navy);
+    border-bottom: 2px solid var(--gold);
+    display: inline-block;
+    padding: 0 0.5rem 0.3rem;
+    margin-bottom: 1.2rem;
+  }
+  #certificate p { color: var(--muted); font-size: 0.9rem; margin: 0.3rem 0; }
+  #certificate .cert-score { font-weight: 700; color: var(--navy); }
+  #certificate .cert-footer {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  footer { text-align: center; color: var(--muted); font-size: 0.78rem; padding: 1.5rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Lamacchia Realty</p>
+  <h1>New Agent Onboarding Quiz</h1>
+  <p>Answer each question about today's training. A score of 75% or higher earns your completion certificate.</p>
+</header>
+
+<main>
+
+  <form id="quizForm">
+    <div class="card">
+      <div class="field">
+        <label for="agentName">Your full name</label>
+        <input type="text" id="agentName" required>
+      </div>
+      <div class="field">
+        <label for="agentEmail">Your email</label>
+        <input type="email" id="agentEmail" required>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="q-label">Question 1</span>
+      <p class="q-text">Which platform hosts your Getting Started page, training calendar, Facebook groups, email &amp; signature setup, and other new-agent resources?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q1" value="0" required> MyLamacchia</label>
+        <label class="option"><input type="radio" name="q1" value="1"> RealTeam3</label>
+        <label class="option"><input type="radio" name="q1" value="2"> ShowingTime</label>
+        <label class="option"><input type="radio" name="q1" value="3"> RealScout</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="q-label">Question 2</span>
+      <p class="q-text">What did training say about contractual documents after an offer is accepted?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q2" value="0" required> They must be submitted to the office once the offer is accepted</label>
+        <label class="option"><input type="radio" name="q2" value="1"> They are optional and only needed at closing</label>
+        <label class="option"><input type="radio" name="q2" value="2"> Agents handle them independently with no office submission</label>
+        <label class="option"><input type="radio" name="q2" value="3"> They are sent directly to the buyer's lender only</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="q-label">Question 3</span>
+      <p class="q-text">How can agents receive co-broke payments?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q3" value="0" required> E-check, or direct deposit / mailed check</label>
+        <label class="option"><input type="radio" name="q3" value="1"> Cash only</label>
+        <label class="option"><input type="radio" name="q3" value="2"> Venmo</label>
+        <label class="option"><input type="radio" name="q3" value="3"> Wire transfer only</label>
+      </div>
+    </div>
+
+    <button type="submit" id="submitBtn">Submit quiz</button>
+    <div id="status"></div>
+  </form>
+
+  <div class="card result-card hidden" id="failResult">
+    <h2>Not quite there yet</h2>
+    <p>You scored <span class="score-big" id="failScore"></span></p>
+    <p>A score of 75% or higher is required to pass. Review today's material and give it another try.</p>
+    <button class="action-btn" id="retakeBtn" style="margin-top:1rem;">Retake quiz</button>
+  </div>
+
+  <div class="hidden" id="passResult">
+    <div class="card result-card pass">
+      <h2>Nice work — you passed</h2>
+      <p>You scored <span class="score-big" id="passScore"></span></p>
+      <p>Your certificate is being generated and sent to the office.</p>
+    </div>
+
+    <div id="certificate">
+      <p class="cert-eyebrow">Lamacchia Realty</p>
+      <h2>Certificate of Completion</h2>
+      <p>This certifies that</p>
+      <div class="cert-name" id="certName"></div>
+      <p>has successfully completed the</p>
+      <p style="font-weight:600; color: var(--navy);">New Agent Onboarding Training</p>
+      <p>with a score of <span class="cert-score" id="certScore"></span></p>
+      <div class="cert-footer">
+        <span id="certDate"></span>
+      </div>
+    </div>
+
+    <div id="sendStatus" style="text-align:center; font-size:0.9rem; color: var(--muted);"></div>
+  </div>
+
+</main>
+
+<footer>Lamacchia Realty &middot; New Agent Onboarding</footer>
+
+<script>
+  const FORM_ENDPOINT = "https://formspree.io/f/YOUR_FORM_ID";
+  const PASS_THRESHOLD = 0.75;
+
+  const answerKey = { q1: "0", q2: "0", q3: "0" };
+  const totalQuestions = Object.keys(answerKey).length;
+
+  const form = document.getElementById("quizForm");
+  const status = document.getElementById("status");
+  const submitBtn = document.getElementById("submitBtn");
+  const failResult = document.getElementById("failResult");
+  const passResult = document.getElementById("passResult");
+  const retakeBtn = document.getElementById("retakeBtn");
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    status.textContent = "";
+    status.className = "";
+
+    const name = document.getElementById("agentName").value.trim();
+    const email = document.getElementById("agentEmail").value.trim();
+
+    let correct = 0;
+    for (const q in answerKey) {
+      const selected = form.querySelector('input[name="' + q + '"]:checked');
+      if (selected && selected.value === answerKey[q]) correct++;
+    }
+    const pct = correct / totalQuestions;
+    const pctDisplay = Math.round(pct * 100) + "%";
+
+    if (pct >= PASS_THRESHOLD) {
+      form.classList.add("hidden");
+      passResult.classList.remove("hidden");
+      document.getElementById("passScore").textContent = pctDisplay;
+      document.getElementById("certName").textContent = name;
+      document.getElementById("certScore").textContent = correct + " of " + totalQuestions + " (" + pctDisplay + ")";
+      document.getElementById("certDate").textContent = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+
+      await sendCertificate(name, email, correct, pctDisplay);
+    } else {
+      failResult.classList.remove("hidden");
+      document.getElementById("failScore").textContent = pctDisplay;
+      submitBtn.disabled = true;
+    }
+  });
+
+  retakeBtn.addEventListener("click", function () {
+    form.reset();
+    failResult.classList.add("hidden");
+    submitBtn.disabled = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  async function sendCertificate(name, email, correct, pctDisplay) {
+    const sendStatus = document.getElementById("sendStatus");
+    sendStatus.textContent = "Sending certificate...";
+    try {
+      const certEl = document.getElementById("certificate");
+      const canvas = await html2canvas(certEl, { backgroundColor: "#ffffff", scale: 2 });
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+
+      const data = new FormData();
+      data.append("Agent Name", name);
+      data.append("Agent Email", email);
+      data.append("Score", correct + " of " + Object.keys(answerKey).length + " (" + pctDisplay + ")");
+      data.append("Result", "PASSED");
+      data.append("certificate", blob, name.replace(/\s+/g, "_") + "_certificate.png");
+
+      const response = await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        headers: { "Accept": "application/json" },
+        body: data
+      });
+
+      if (response.ok) {
+        sendStatus.textContent = "Certificate sent to the office. Welcome aboard!";
+      } else {
+        throw new Error("Send failed");
+      }
+    } catch (err) {
+      sendStatus.textContent = "Certificate generated, but sending it failed. Please screenshot this and send it to the office directly.";
+      sendStatus.style.color = "var(--red)";
+    }
+  }
+</script>
+
+</body>
+</html>
