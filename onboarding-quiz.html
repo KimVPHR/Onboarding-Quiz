@@ -229,6 +229,17 @@
       </div>
     </div>
 
+    <div class="card">
+      <span class="q-label">Question 4</span>
+      <p class="q-text">When should you send in documents to the office?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q4" value="0" required> Only once every document is fully signed by all parties</label>
+        <label class="option"><input type="radio" name="q4" value="1"> At the end of the transaction, during closing</label>
+        <label class="option"><input type="radio" name="q4" value="2"> As soon as you get them signed, even if it's not all of the documents</label>
+        <label class="option"><input type="radio" name="q4" value="3"> Whenever the buyer's agent requests them</label>
+      </div>
+    </div>
+
     <button type="submit" id="submitBtn">Submit quiz</button>
     <div id="status"></div>
   </form>
@@ -271,7 +282,7 @@
   const FORM_ENDPOINT = "https://formspree.io/f/xpqvjrba";
   const PASS_THRESHOLD = 0.75;
 
-  const answerKey = { q1: "1", q2: "2", q3: "3" };
+  const answerKey = { q1: "1", q2: "2", q3: "3", q4: "2" };
   const totalQuestions = Object.keys(answerKey).length;
 
   const form = document.getElementById("quizForm");
